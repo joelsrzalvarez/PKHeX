@@ -48,8 +48,6 @@ public sealed class SubEventLog6XY(SAV6XY sav, Memory<byte> raw) : SubEventLog6(
     // 0x00
     // u8[0x28] chateau data
 
-    public const ushort ChateauRankGrandDuke = 5;
-    public const ushort ChateauPointsGrandDuke = 1000;
     public const ushort ChateauRankMax = 0xF;
     public const ushort ChateauPointsMax = 0x0FFF;
 
@@ -80,8 +78,18 @@ public sealed class SubEventLog6XY(SAV6XY sav, Memory<byte> raw) : SubEventLog6(
         ChateauRank = rank;
     }
 
-    public void SetChateauGrandDuke() => SetChateau(ChateauRankGrandDuke, ChateauPointsGrandDuke);
+    public static ushort GetChateauPointsForRank(ushort rank) => rank switch
+    {
+        0 => 0,
+        1 => 5,
+        2 => 30,
+        3 => 100,
+        4 => 300,
+        5 => 1000,
+        _ => throw new ArgumentOutOfRangeException(nameof(rank)),
+    };
 
+    public void SetChateauByRank(ushort rank) => SetChateau(rank, GetChateauPointsForRank(rank));
     // other château data?
     // u32 SUBE @ 0x28
     // 0x2C
@@ -98,6 +106,7 @@ public sealed class SubEventLog6XY(SAV6XY sav, Memory<byte> raw) : SubEventLog6(
     public override int UnusedPKM => 0x17C;
     // u32 SUBE @ 0x264
     // 0x268
+    // u8[0xA0] unused?
     // u8[0xA0] unused?
 }
 
